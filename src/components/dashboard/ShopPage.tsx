@@ -59,11 +59,13 @@ const ShopPage = () => {
   const skeletons = Array.from({ length: 6 });
 
   return (
-    <div className="w-[90%] max-w-[1550px] m-auto mt-10 mb-20 flex flex-col lg:flex-row gap-8">
+    <div className="w-[90%] max-w-[1400px] m-auto mt-10 mb-20 flex flex-col lg:flex-row gap-8">
+      {/* SIDEBAR */}
       <div className="w-full lg:w-[25%] bg-[#fbfbfb] p-4 rounded-md h-fit">
         <h3 className="font-bold text-[18px] text-[#3D3D3D] mb-4">
           Categories
         </h3>
+
         <div className="p-2 flex flex-col gap-5">
           {categoryLoading || categoryError
             ? cateGoryLoader()
@@ -79,39 +81,54 @@ const ShopPage = () => {
                       sort,
                     })
                   }
-                  className={`flex items-center justify-between cursor-pointer transition-colors
-                    ${category === cat.route_path ? "text-[#46a358] font-bold" : "text-[#3d3d3d] hover:text-[#46a358]"}
-                  `}
+                  className={`flex items-center justify-between cursor-pointer
+                    transition-all duration-300 ease-out
+                    hover:translate-x-1 hover:scale-[1.01]
+                    active:scale-[0.97]
+                    ${
+                      category === cat.route_path
+                        ? "text-[#46a358] font-bold"
+                        : "text-[#3d3d3d] hover:text-[#46a358]"
+                    }`}
                 >
                   <h3>{cat.title}</h3>
-                  <span className="text-gray-400">({cat.count})</span>
+                  <span className="text-gray-400 transition-colors duration-300">
+                    ({cat.count})
+                  </span>
                 </div>
               ))}
         </div>
 
+        {/* PRICE RANGE */}
         <div className="mt-8">
           <h3 className="font-bold text-[18px] text-[#3D3D3D] mb-4">
             Price Range
           </h3>
-          <Slider
-            range
-            min={0}
-            max={1000}
-            value={slider}
-            onChange={changeSlider}
-            trackStyle={[{ backgroundColor: "#46A358" }]}
-            handleStyle={[
-              { borderColor: "#46A358", backgroundColor: "#46A358" },
-              { borderColor: "#46A358", backgroundColor: "#46A358" },
-            ]}
-          />
-          <p className="mt-2 text-[#3D3D3D]">
+
+          <div className="transition-all duration-300 ease-out hover:scale-[1.01]">
+            <Slider
+              range
+              min={0}
+              max={1000}
+              value={slider}
+              onChange={changeSlider}
+              trackStyle={[{ backgroundColor: "#46A358" }]}
+              handleStyle={[
+                { borderColor: "#46A358", backgroundColor: "#46A358" },
+                { borderColor: "#46A358", backgroundColor: "#46A358" },
+              ]}
+            />
+          </div>
+
+          <p className="mt-2 text-[#3D3D3D] transition-all duration-300">
             Price:{" "}
             <span className="text-[#46A358] font-bold">
               {slider[0]}$ - {slider[1]}$
             </span>
           </p>
         </div>
+
+        {/* FILTER BUTTON */}
         <button
           onClick={() =>
             setParam({
@@ -122,16 +139,23 @@ const ShopPage = () => {
               sort,
             })
           }
-          className="bg-[#46a358] w-full mt-2 rounded-lg font-medium text-white p-[7px_25px] cursor-pointer transition-all duration-300 hover:bg-[#367e42] hover:shadow-lg"
+          className="bg-[#46a358] w-full mt-2 rounded-lg font-medium text-white
+          p-[7px_25px] cursor-pointer
+          transition-all duration-300 ease-out
+          hover:bg-[#367e42] hover:shadow-xl
+          active:scale-[0.96]"
         >
           Filter
         </button>
 
-        <Discount />
+        <div className="transition-all duration-300 ease-out hover:scale-[1.02]">
+          <Discount />
+        </div>
       </div>
 
+      {/* PRODUCTS */}
       <div className="w-full lg:w-[75%]">
-        <div className="mb-8">
+        <div className="mb-8 transition-all duration-300 hover:translate-y-[-2px]">
           <ProductsTitle />
         </div>
 
@@ -142,7 +166,10 @@ const ShopPage = () => {
             skeletons.map((_, idx) => (
               <div
                 key={idx}
-                className="p-4 border rounded-md shadow-sm flex flex-col gap-2 items-center justify-center h-[300px]"
+                className="p-4 border rounded-md shadow-sm
+                flex flex-col gap-2 items-center justify-center h-[300px]
+                transition-all duration-300 ease-out
+                hover:-translate-y-2 hover:shadow-md"
               >
                 <Skeleton.Image active style={{ width: 180, height: 180 }} />
                 <Skeleton.Input active />
@@ -150,7 +177,13 @@ const ShopPage = () => {
             ))
           ) : (
             productsData?.map((product) => (
-              <Card key={product._id} product={product} />
+              <div
+                key={product._id}
+                className="transition-all duration-300 ease-out
+                hover:-translate-y-2 hover:shadow-lg"
+              >
+                <Card product={product} />
+              </div>
             ))
           )}
         </div>

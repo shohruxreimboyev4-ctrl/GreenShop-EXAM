@@ -41,7 +41,8 @@ const Card = ({ product }: { product: ProductType }) => {
           relative w-full h-[300px] bg-[#fbfbfb]
           flex items-center justify-center
           overflow-hidden transition-all duration-300
-          group-hover:border-t-[2px] group-hover:border-[#46A358]
+          border-t-[3px] border-transparent
+          hover:border-t-[#46A358]
           rounded-sm
         "
       >
