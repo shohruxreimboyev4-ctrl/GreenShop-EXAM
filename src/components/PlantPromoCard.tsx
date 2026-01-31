@@ -42,45 +42,94 @@ const PlantPromoCard: React.FC<PlantPromoCardProps> = ({
   title,
   description,
   image,
+  link,
 }) => {
   return (
-    <div className="relative  flex flex-col sm:flex-row items-center justify-between border border-gray-100 rounded bg-[#fbfbfb] p-6 shadow-sm overflow-hidden h-full">
-      <div className="absolute z-20 bottom-[-20px] left-[-0px]">
+    <div
+      className="
+        group relative flex items-center justify-between
+        rounded-2xl border border-gray-100
+        bg-gradient-to-b from-white to-[#fbfbfb]
+        px-7 sm:px-8 py-6
+        shadow-[0_10px_30px_rgba(0,0,0,0.06)]
+        overflow-hidden min-h-[250px]
+        transition-all duration-300
+        hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(0,0,0,0.10)]
+      "
+    >
+      {/* Decorative ellipses */}
+      <div className="absolute z-10 bottom-[-28px] left-[-14px] opacity-80 group-hover:opacity-100 transition-opacity duration-300">
         <img src={Ellipse8} alt="" />
       </div>
-      <div className="absolute z-20 bottom-[-20px] left-[2px]">
+      <div className="absolute z-10 bottom-[-28px] left-[6px] opacity-70 group-hover:opacity-95 transition-opacity duration-300">
         <img src={Ellipse7} alt="" />
       </div>
-      <div className="absolute z-20 bottom-[-10px] left-[-10px]" />
 
-      <div className="z-0 w-full sm:w-1/3 flex justify-center sm:justify-start mb-4 sm:mb-0">
+      {/* Soft glow */}
+      <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-[#46A358]/10 blur-2xl opacity-60 group-hover:opacity-90 transition-opacity duration-300" />
+      <div className="pointer-events-none absolute -bottom-28 -left-28 h-72 w-72 rounded-full bg-emerald-300/10 blur-2xl opacity-60 group-hover:opacity-90 transition-opacity duration-300" />
+
+      {/* Shine line */}
+      <span
+        className="
+          pointer-events-none absolute -left-1/2 top-0 h-full w-1/2
+          bg-gradient-to-r from-transparent via-white/25 to-transparent
+          -skew-x-12
+          opacity-0
+          group-hover:opacity-100 group-hover:translate-x-[240%]
+          transition-all duration-700
+        "
+      />
+
+      {/* Image */}
+      <div className="relative z-20 w-[40%] flex items-end justify-start">
         <img
           src={image}
           alt={title}
-          className="  object-contain transform hover:scale-105 transition-transform duration-300"
+          className="
+            max-h-[180px] object-contain
+            transition-transform duration-500
+            group-hover:scale-[1.06] group-hover:-rotate-[1deg]
+          "
         />
       </div>
 
-      <div className="z-10 w-full sm:w-2/3 flex flex-col items-center sm:items-end text-center sm:text-right pl-0 sm:pl-4">
-        <h3 className="font-family font-black text-[18px] leading-[133%] uppercase text-right text-[#3d3d3d] mb-2  max-w-[200px]">
+      {/* Text content */}
+      <div className="relative z-20 w-[60%] flex flex-col justify-center text-right">
+        <h3 className="font-family font-black text-[18px] sm:text-[19px] leading-[1.25] uppercase text-[#2f2f2f] mb-3 max-w-[280px] ml-auto">
           {title}
         </h3>
-        <p className="font-family font-normal text-[14px] leading-[171%] text-right text-[#727272] mb-5  max-w-[280px]">
+
+        <p className="font-family font-normal text-[14px] leading-[1.75] text-[#6f6f6f] mb-6 max-w-[300px] ml-auto">
           {description}
         </p>
 
         <a
-          href="#"
-          className="inline-flex items-center justify-center gap-2 bg-[#46a358] hover:bg-[#357a40] transition-colors font-family font-medium text-[14px] leading-[143%] text-[#fff] px-5 py-2.5 rounded-md min-w-[140px]"
+          href={link}
+          className="
+            relative inline-flex items-center justify-center gap-2
+            font-family font-semibold text-[14px]
+            px-6 py-2.5 rounded-xl w-fit ml-auto
+            text-white
+            bg-[#46a358]
+            shadow-[0_12px_25px_rgba(70,163,88,0.25)]
+            transition-all duration-300
+            hover:bg-[#357a40]
+            hover:-translate-y-[2px]
+            hover:shadow-[0_16px_34px_rgba(70,163,88,0.33)]
+            active:translate-y-0 active:scale-[0.99]
+          "
         >
-          Find More
+          <span className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-r from-white/0 via-white/18 to-white/0" />
+          <span className="relative">Find More</span>
+
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className="w-4 h-4"
+            className="relative w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
           >
             <path
               strokeLinecap="round"
@@ -96,7 +145,7 @@ const PlantPromoCard: React.FC<PlantPromoCardProps> = ({
 
 const PlantPromoSection: React.FC = () => {
   return (
-    <section className="w-[90%] max-w-[1400px] mx-auto px-4 py-6">
+    <section className="w-[90%] max-w-[1400px] mx-auto py-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {promoData.map((item) => (
           <PlantPromoCard

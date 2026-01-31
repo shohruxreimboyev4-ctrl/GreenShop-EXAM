@@ -1,7 +1,7 @@
 import { Heart, Search, ShoppingCart } from "lucide-react";
 import type { ProductType } from "../../@types/AuthType";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   useReduxDispatch,
   useReduxSelector,
@@ -19,15 +19,25 @@ const Card = ({ product }: { product: ProductType }) => {
     navigate(`/shop/${product.category}/${product._id}`);
   };
 
-  const isInCart = data.some((item: ProductType) => item._id === product._id);
+  const isInCart = useMemo(
+    () => data.some((item: ProductType) => item._id === product._id),
+    [data, product._id],
+  );
 
   const addToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
-
-    if (!isInCart) {
-      dispatch(getData(product));
-    }
+    if (!isInCart) dispatch(getData(product));
   };
+
+  // ✅ iconlar tiniq chiqishi uchun bitta umumiy class
+  const iconBtnBase =
+    "w-[35px] h-[35px] rounded-md flex items-center justify-center " +
+    "cursor-pointer select-none shadow-md " +
+    "transition-[transform,box-shadow,color,background-color] duration-200 ease-out " +
+    "hover:-translate-y-[2px] active:translate-y-0 active:scale-[0.97] " +
+    "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#46A358]/40 " +
+    "backdrop-blur-0 will-change-transform " +
+    "[image-rendering:auto] [shape-rendering:geometricPrecision]";
 
   return (
     <div className="group">
@@ -38,54 +48,62 @@ const Card = ({ product }: { product: ProductType }) => {
           }
         }}
         className="
-          relative w-full h-[300px] bg-[#fbfbfb]
+          relative w-full h-[300px] bg-[#f2f2f2]
           flex items-center justify-center
-          overflow-hidden transition-all duration-300
-          border-t-[3px] border-transparent
-          hover:border-t-[#46A358]
+          overflow-hidden
+          border-t-[3px] border-transparent hover:border-t-[#46A358]
           rounded-sm
+
+          transition-[transform,box-shadow,border-color] duration-300 ease-out
+          hover:-translate-y-[1px]
+          hover:shadow-[0_10px_24px_rgba(0,0,0,0.08)]
         "
       >
         <img
           src={product.main_image}
           alt={product.title}
-          className="w-[80%] h-[80%] object-contain mix-blend-multiply"
+          className="
+            w-[80%] h-[80%] object-contain mix-blend-multiply
+            transition-transform duration-300 ease-out
+            group-hover:scale-[1.03]
+          "
         />
 
         <div
           className={`
             absolute left-1/2 -translate-x-1/2 flex gap-4 z-20
-            transition-all duration-300
+
+            /* ✅ blurni olib tashladik: iconlar hira bo‘lmaydi */
+            transition-[opacity,transform,bottom] duration-300 ease-out
             ${isMobileOpen ? "opacity-100 bottom-6" : "opacity-0 -bottom-10"}
+            ${isMobileOpen ? "translate-y-0" : "translate-y-2"}
+
             lg:opacity-0
             lg:-bottom-10
+            lg:translate-y-2
             lg:group-hover:opacity-100
             lg:group-hover:bottom-6
+            lg:group-hover:translate-y-0
           `}
         >
           <div
             onClick={addToCart}
-            className={`
-              w-[35px] h-[35px] rounded-md flex items-center justify-center
-              cursor-pointer shadow-md hover:-translate-y-[2px] transition-all
-              ${
-                isInCart
-                  ? "bg-[#46A358] text-white"
-                  : "bg-white text-[#3D3D3D] hover:text-[#46A358]"
-              }
-            `}
+            className={`${iconBtnBase} ${
+              isInCart
+                ? "bg-[#46A358] text-white hover:shadow-[0_8px_18px_rgba(70,163,88,0.25)]"
+                : "bg-white text-[#3D3D3D] hover:text-[#46A358] hover:shadow-[0_8px_18px_rgba(0,0,0,0.10)]"
+            }`}
             title={isInCart ? "Added to Cart" : "Add to Cart"}
           >
-            <ShoppingCart size={20} />
+            <ShoppingCart size={20} className="opacity-100" />
           </div>
 
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-[35px] h-[35px] bg-white rounded-md flex items-center justify-center
-                       text-[#3D3D3D] hover:text-[#46A358]
-                       cursor-pointer shadow-md hover:-translate-y-[2px] transition-all"
+            className={`${iconBtnBase} bg-white text-[#3D3D3D] hover:text-[#46A358] hover:shadow-[0_8px_18px_rgba(0,0,0,0.10)]`}
+            title="Add to Wishlist"
           >
-            <Heart size={20} />
+            <Heart size={20} className="opacity-100" />
           </div>
 
           <div
@@ -93,11 +111,10 @@ const Card = ({ product }: { product: ProductType }) => {
               e.stopPropagation();
               handleViewDetails();
             }}
-            className="w-[35px] h-[35px] bg-white rounded-md flex items-center justify-center
-                       text-[#3D3D3D] hover:text-[#46A358]
-                       cursor-pointer shadow-md hover:-translate-y-[2px] transition-all"
+            className={`${iconBtnBase} bg-white text-[#3D3D3D] hover:text-[#46A358] hover:shadow-[0_8px_18px_rgba(0,0,0,0.10)]`}
+            title="View Details"
           >
-            <Search size={20} />
+            <Search size={20} className="opacity-100" />
           </div>
         </div>
       </div>

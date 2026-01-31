@@ -40,7 +40,7 @@ const ProductPage = () => {
   const currentImage = selectedImage || product.main_image;
 
   return (
-    <div className="w-[90%] max-w-[1400px] m-auto mt-10 mb-20">
+    <div className="w-[90%] max-w-[1400px] mx-auto mt-10 mb-20">
       <div className="mb-6 flex items-center gap-2">
         <button
           onClick={() => navigate(-1)}

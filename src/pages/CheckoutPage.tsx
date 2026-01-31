@@ -37,7 +37,7 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div className="w-[90%] max-w-[1550px] m-auto mt-10 mb-20">
+    <div className="w-[90%] max-w-[1400px] mx-auto mt-10 mb-20">
       <form
         onSubmit={handlePlaceOrder}
         className="flex flex-col md:flex-row gap-10"

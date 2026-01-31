@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Slider, Skeleton } from "antd";
+import { Slider } from "antd";
+import SkeletonLoader from "../generic/SkeletonLoader";
 import { useQueryHandler } from "../../hooks/useQuery/UseQuery";
 import type {
   CategoryType,
@@ -56,12 +57,12 @@ const ShopPage = () => {
     },
   });
 
-  const skeletons = Array.from({ length: 6 });
+
 
   return (
-    <div className="w-[90%] max-w-[1400px] m-auto mt-10 mb-20 flex flex-col lg:flex-row gap-8">
+    <div className="w-[90%] max-w-[1400px] mx-auto mt-10 mb-20 flex flex-col lg:flex-row gap-8">
       {/* SIDEBAR */}
-      <div className="w-full lg:w-[25%] bg-[#fbfbfb] p-4 rounded-md h-fit">
+      <div className="w-full lg:w-[20%] bg-[#f2f2f2] p-4 rounded-md h-fit">
         <h3 className="font-bold text-[18px] text-[#3D3D3D] mb-4">
           Categories
         </h3>
@@ -92,7 +93,7 @@ const ShopPage = () => {
                     }`}
                 >
                   <h3>{cat.title}</h3>
-                  <span className="text-gray-400 transition-colors duration-300">
+                  <span className="text-gray-800 transition-colors duration-300">
                     ({cat.count})
                   </span>
                 </div>
@@ -163,18 +164,7 @@ const ShopPage = () => {
           {productsError ? (
             <p className="text-red-500 font-medium">Products not found 😕</p>
           ) : productsLoading ? (
-            skeletons.map((_, idx) => (
-              <div
-                key={idx}
-                className="p-4 border rounded-md shadow-sm
-                flex flex-col gap-2 items-center justify-center h-[300px]
-                transition-all duration-300 ease-out
-                hover:-translate-y-2 hover:shadow-md"
-              >
-                <Skeleton.Image active style={{ width: 180, height: 180 }} />
-                <Skeleton.Input active />
-              </div>
-            ))
+            <SkeletonLoader variant="card" count={6} />
           ) : (
             productsData?.map((product) => (
               <div
