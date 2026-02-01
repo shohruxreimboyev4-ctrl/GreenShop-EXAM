@@ -13,16 +13,11 @@ import BF1Oo3xK from "../../assets/images/2-BF1Oo3xK.png";
 import BispicH from "../../assets/images/3-Bi-spicH.png";
 import Logo from "../../assets/images/Logo.svg";
 
-// ✅ LOGO: o'zing import qilasan
-// import Logo from "../../assets/images/logo.png";
-
 const Footer: React.FC = () => {
   return (
     <footer className="bg-white border-t border-gray-200 mt-16 font-sans">
-      {/* ===== TOP: services + newsletter ===== */}
       <div className="w-[90%] max-w-[1400px] mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 py-10">
-          {/* 1 */}
           <div className="relative lg:pr-8 lg:border-r lg:border-gray-200">
             <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mb-4">
               <img src={Ctm6W3Jq} alt="" className="w-10 h-10 object-contain" />
@@ -36,7 +31,6 @@ const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* 2 */}
           <div className="relative lg:px-8 lg:border-r lg:border-gray-200">
             <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mb-4">
               <img src={BF1Oo3xK} alt="" className="w-10 h-10 object-contain" />
@@ -50,7 +44,6 @@ const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* 3 */}
           <div className="relative lg:px-8 lg:border-r lg:border-gray-200">
             <div className="w-16 h-16 rounded-full bg-green-50 flex items-center justify-center mb-4">
               <img src={BispicH} alt="" className="w-10 h-10 object-contain" />
@@ -64,7 +57,6 @@ const Footer: React.FC = () => {
             </p>
           </div>
 
-          {/* Newsletter */}
           <div className="lg:pl-8">
             <h4 className="text-[18px] font-bold text-[#3d3d3d] mb-4">
               Would you like to join newsletters?
@@ -91,11 +83,9 @@ const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* ===== CONTACT BAR (✅ och aqua-green) ===== */}
       <div className="bg-[#D7F3E6] border-y border-[#CBEBDD]">
         <div className="w-[90%] max-w-[1400px] mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 py-6 items-center">
-            {/* logo */}
             <div className="flex items-center justify-center md:justify-start gap-3">
               
 
@@ -121,11 +111,9 @@ const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* ===== LINKS + SOCIAL + PAYMENTS ===== */}
       <div className="bg-white">
         <div className="w-[90%] max-w-[1400px] mx-auto py-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-            {/* My Account */}
             <div>
               <h4 className="text-[18px] font-bold text-[#3d3d3d] mb-4">
                 My Account
@@ -174,7 +162,6 @@ const Footer: React.FC = () => {
               </ul>
             </div>
 
-            {/* Help & Guide */}
             <div>
               <h4 className="text-[18px] font-bold text-[#3d3d3d] mb-4">
                 Help &amp; Guide
@@ -223,7 +210,6 @@ const Footer: React.FC = () => {
               </ul>
             </div>
 
-            {/* Categories */}
             <div>
               <h4 className="text-[18px] font-bold text-[#3d3d3d] mb-4">
                 Categories
@@ -272,7 +258,6 @@ const Footer: React.FC = () => {
               </ul>
             </div>
 
-            {/* Social + Payments */}
             <div>
               <h4 className="text-[18px] font-bold text-[#3d3d3d] mb-4">
                 Social Media
@@ -364,14 +349,12 @@ const Footer: React.FC = () => {
         </div>
       </div>
 
-      {/* ===== BOTTOM BAR (✅ qop-qora emas, ochroq dark) ===== */}
       <div className="border-t border-gray-200 bg-gray-50">
         <div className="w-[90%] max-w-[1400px] mx-auto py-4 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-gray-800 text-sm text-center md:text-left">
             © 2021 GreenShop. All Rights Reserved.
           </p>
 
-          {/* pastdagi social iconlar (✅ dark bar uchun mos) */}
           <div className="flex items-center gap-3">
             {[
               { icon: <FaFacebookF />, href: "https://facebook.com" },

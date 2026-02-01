@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Image, Rate } from "antd";
-import { HeartOutlined } from "@ant-design/icons";
+import { HeartFilled, HeartOutlined } from "@ant-design/icons";
 import { useQueryHandler } from "../hooks/useQuery/UseQuery";
 import { loaderApi } from "../generic/loader/loaderApi";
+import { useWishlist } from "../hooks/useWishlist/useWishlist";
 import type { ProductType, QueryType } from "../@types/AuthType";
 
 const ProductPage = () => {
   const { category, id } = useParams();
   const navigate = useNavigate();
   const { cateGoryLoader } = loaderApi();
+  const { toggleWishlist, isInWishlist } = useWishlist();
 
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedSize, setSelectedSize] = useState<string>("S");
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
 
   const {
     data: product,
@@ -196,8 +199,54 @@ const ProductPage = () => {
               Add to Cart
             </button>
 
-            <button className="w-11 h-11 cursor-pointer border border-[#EAEAEA] rounded-[6px] flex items-center justify-center text-[#3D3D3D] hover:text-[#46A358] hover:border-[#46A358] transition-all">
-              <HeartOutlined style={{ fontSize: "20px" }} />
+            <button
+              type="button"
+              disabled={isAddingToWishlist}
+              className={`w-11 h-11 cursor-pointer border rounded-[6px] flex items-center justify-center transition-all disabled:opacity-60 ${
+                isInWishlist(product._id)
+                  ? "border-[#ff6b6b] bg-[#fff5f5] text-[#ff6b6b]"
+                  : "border-[#EAEAEA] text-[#3D3D3D] hover:text-[#46A358] hover:border-[#46A358]"
+              }`}
+              onClick={() => {
+                setIsAddingToWishlist(true);
+                const success = toggleWishlist(product);
+                setIsAddingToWishlist(false);
+                if (success && !isInWishlist(product._id)) {
+                  setTimeout(() => {
+                    navigate("/profile/wishlist");
+                  }, 300);
+                }
+              }}
+              onKeyDown={(e) => {
+                if ((e.key === "Enter" || e.key === " ") && !isAddingToWishlist) {
+                  e.preventDefault();
+                  setIsAddingToWishlist(true);
+                  const success = toggleWishlist(product);
+                  setIsAddingToWishlist(false);
+                  if (success && !isInWishlist(product._id)) {
+                    setTimeout(() => {
+                      navigate("/profile/wishlist");
+                    }, 300);
+                  }
+                }
+              }}
+              aria-label="wishlist"
+            >
+              {isInWishlist(product._id) ? (
+                <HeartFilled
+                  style={{
+                    fontSize: "20px",
+                    animation: isAddingToWishlist ? "pulse 1s infinite" : "none",
+                  }}
+                />
+              ) : (
+                <HeartOutlined
+                  style={{
+                    fontSize: "20px",
+                    animation: isAddingToWishlist ? "pulse 1s infinite" : "none",
+                  }}
+                />
+              )}
             </button>
           </div>
 

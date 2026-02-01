@@ -1,9 +1,3 @@
-/**
- * API Debugger Utility
- * Tests /api/user/products endpoint and logs all response details
- * Helps diagnose JWT vs ObjectId, CORS, response shape, caching issues
- */
-
 export type DebugResult = {
   success: boolean;
   status?: number;
@@ -39,70 +33,111 @@ export async function debugUserProductsEndpoint(
     duration: 0,
   };
 
+  if (!baseUrl || typeof baseUrl !== "string") {
+    result.error = "baseUrl is missing or invalid";
+    result.duration = Math.round(performance.now() - startTime);
+    return result;
+  }
+
+  if (!accessToken || typeof accessToken !== "string") {
+    result.error = "accessToken is missing or invalid";
+    result.duration = Math.round(performance.now() - startTime);
+    return result;
+  }
+
   try {
-    const url = `${baseUrl}/user/products?access_token=${encodeURIComponent(
+    const safeBaseUrl = baseUrl.replace(/\/+$/, "");
+
+    const url = `${safeBaseUrl}/user/products?access_token=${encodeURIComponent(
       accessToken,
     )}`;
 
     console.log("🔍 DEBUG: Fetching", url);
 
-    const response = await fetch(url, {
-      method: "GET",
-      credentials: "include", // Send cookies if needed
-      headers: {
-        Accept: "application/json",
-      },
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+    let response: Response;
+
+    try {
+      response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Cache-Control": "no-cache",
+          Pragma: "no-cache",
+        },
+        cache: "no-store",
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     result.status = response.status;
     result.statusText = response.statusText;
 
-    // Capture all response headers
     const allHeaders: Record<string, string> = {};
     response.headers.forEach((value, key) => {
       allHeaders[key] = value;
     });
     result.headers = allHeaders;
 
-    // Extract CORS headers
     result.corsHeaders = {
-      allowOrigin: response.headers.get("access-control-allow-origin") || undefined,
+      allowOrigin:
+        response.headers.get("access-control-allow-origin") || undefined,
       allowCredentials:
         response.headers.get("access-control-allow-credentials") || undefined,
-      allowMethods: response.headers.get("access-control-allow-methods") || undefined,
+      allowMethods:
+        response.headers.get("access-control-allow-methods") || undefined,
     };
 
-    // Extract cache headers
     result.cacheHeaders = {
       eTag: response.headers.get("etag") || undefined,
       cacheControl: response.headers.get("cache-control") || undefined,
       lastModified: response.headers.get("last-modified") || undefined,
     };
 
-    // Read response body
     result.rawBody = await response.text();
 
-    // Try to parse as JSON
     if (result.rawBody) {
-      try {
-        result.parsedBody = JSON.parse(result.rawBody);
-      } catch (e) {
-        console.warn("⚠️ Response is not JSON:", result.rawBody.slice(0, 100));
+      const contentType = response.headers.get("content-type") || "";
+      const looksJson =
+        contentType.includes("application/json") ||
+        result.rawBody.trim().startsWith("{") ||
+        result.rawBody.trim().startsWith("[");
+
+      if (looksJson) {
+        try {
+          result.parsedBody = JSON.parse(result.rawBody);
+        } catch {
+          console.warn("⚠️ Response JSONga o‘xshaydi, lekin parse bo‘lmadi.");
+        }
       }
     }
 
     result.success = response.ok;
 
     if (!response.ok) {
-      result.error = `HTTP ${response.status}: ${result.statusText}`;
+      const preview = result.rawBody ? result.rawBody.slice(0, 200) : "";
+      result.error = `HTTP ${response.status}: ${result.statusText}${
+        preview ? ` | Body: ${preview}` : ""
+      }`;
     }
 
-    const duration = performance.now() - startTime;
-    result.duration = Math.round(duration);
-
+    result.duration = Math.round(performance.now() - startTime);
     return result;
-  } catch (e: any) {
-    result.error = e?.message || "Unknown error";
+  } catch (e: unknown) {
+    const err = e as { name?: string; message?: string };
+
+    if (err?.name === "AbortError") {
+      result.error =
+        "Request timeout (15s). Backend javob bermadi yoki internet sekin.";
+    } else {
+      result.error = err?.message || "Unknown error";
+    }
+
     result.duration = Math.round(performance.now() - startTime);
     return result;
   }
@@ -112,7 +147,10 @@ export function logDebugResult(result: DebugResult): void {
   console.group("🔧 API Debug Result");
 
   console.log("✅ Success:", result.success);
-  console.log("📊 Status:", `${result.status} ${result.statusText}`);
+  console.log(
+    "📊 Status:",
+    `${result.status ?? "?"} ${result.statusText ?? ""}`.trim(),
+  );
   console.log("⏱️ Duration:", `${result.duration}ms`);
 
   if (result.error) {
@@ -132,7 +170,7 @@ export function logDebugResult(result: DebugResult): void {
   console.groupEnd();
 
   console.group("📦 Response Body");
-  if (result.parsedBody) {
+  if (result.parsedBody !== undefined) {
     console.log("Parsed JSON:", result.parsedBody);
   } else {
     console.log("Raw text:", result.rawBody);
@@ -141,50 +179,48 @@ export function logDebugResult(result: DebugResult): void {
 
   console.group("🔍 Diagnostic Hints");
 
-  // Check CORS
   if (!result.corsHeaders.allowOrigin) {
     console.warn(
-      "⚠️ No Access-Control-Allow-Origin header. Backend CORS may not allow localhost.",
+      "⚠️ No Access-Control-Allow-Origin header. Backend CORS localhostni ruxsat bermayotgan bo‘lishi mumkin.",
     );
   }
 
-  // Check cache
   if (result.status === 304) {
-    console.warn("⚠️ Got 304 Not Modified. Response body may be empty (cached).");
+    console.warn(
+      "⚠️ Got 304 Not Modified. Response body bo‘sh bo‘lishi mumkin (cached).",
+    );
   }
 
-  // Check response shape
   if (result.parsedBody) {
-    const hasProducts = Array.isArray(result.parsedBody);
-    const hasProductsKey = result.parsedBody?.products;
-    const hasDataKey = result.parsedBody?.data;
+    const body = result.parsedBody;
+    const isArray = Array.isArray(body);
+    const hasProductsKey = Array.isArray(body?.products);
+    const hasDataKey = Array.isArray(body?.data);
 
-    if (!hasProducts && !hasProductsKey && !hasDataKey) {
+    if (!isArray && !hasProductsKey && !hasDataKey) {
       console.warn(
         "⚠️ Response shape unclear. Expected array, {products: []}, or {data: []}.",
       );
-      console.log(
-        "   Got keys:",
-        Object.keys(result.parsedBody).join(", "),
-      );
+      if (typeof body === "object") {
+        console.log("   Got keys:", Object.keys(body).join(", "));
+      } else {
+        console.log("   Got type:", typeof body);
+      }
+    }
+
+    const list = isArray
+      ? body
+      : hasProductsKey
+        ? body.products
+        : hasDataKey
+          ? body.data
+          : null;
+
+    if (Array.isArray(list)) {
+      console.log(`🧾 Products count: ${list.length}`);
     }
   }
 
   console.groupEnd();
   console.groupEnd();
 }
-
-/**
- * Example usage in React component:
- *
- * useEffect(() => {
- *   const test = async () => {
- *     const result = await debugUserProductsEndpoint(
- *       "https://beckend-n14-soqt.vercel.app/api",
- *       "68498a885b84cdab155e6388"
- *     );
- *     logDebugResult(result);
- *   };
- *   test();
- * }, []);
- */

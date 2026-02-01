@@ -22,8 +22,13 @@ const Address: React.FC = () => {
   const initialUser = useMemo(() => {
     const raw = Cookies.get("user");
     if (!raw) return null;
+
     try {
-      return JSON.parse(raw) as CookieUser;
+      const maybeDecoded = raw.includes("%") ? decodeURIComponent(raw) : raw;
+      const parsed = JSON.parse(maybeDecoded) as CookieUser;
+
+      if (!parsed || typeof parsed !== "object") return null;
+      return parsed;
     } catch {
       return null;
     }
@@ -34,15 +39,22 @@ const Address: React.FC = () => {
   const handleSaveAddress = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (!user) {
+      message.error("User topilmadi. Iltimos login qiling.");
+      return;
+    }
+
     const formData = new FormData(e.currentTarget);
 
+    const getStr = (key: string) => String(formData.get(key) ?? "").trim();
+
     const newAddress: BillingAddress = {
-      country: (formData.get("country") as string) || "",
-      town: (formData.get("town") as string) || "",
-      street_address: (formData.get("street") as string) || "",
-      extra_address: (formData.get("extra_address") as string) || "",
-      state: (formData.get("state") as string) || "",
-      zip: (formData.get("zip") as string) || "",
+      country: getStr("country"),
+      town: getStr("town"),
+      street_address: getStr("street"),
+      extra_address: getStr("extra_address"),
+      state: getStr("state"),
+      zip: getStr("zip"),
     };
 
     const updatedUser: CookieUser = {
@@ -53,9 +65,17 @@ const Address: React.FC = () => {
       },
     };
 
-    Cookies.set("user", JSON.stringify(updatedUser));
-    setUser(updatedUser);
-    message.success("Address saved successfully!");
+    try {
+      Cookies.set("user", JSON.stringify(updatedUser), {
+        sameSite: "lax",
+        secure: window.location.protocol === "https:",
+      });
+
+      setUser(updatedUser);
+      message.success("Address saved successfully!");
+    } catch {
+      message.error("Cookie saqlashda xatolik bo‘ldi.");
+    }
   };
 
   return (
@@ -82,7 +102,7 @@ const Address: React.FC = () => {
                 required
                 name="country"
                 type="text"
-                defaultValue={user?.billing_address?.country}
+                defaultValue={user?.billing_address?.country || ""}
                 placeholder="Select your country / region..."
                 className="border border-[#EAEAEA] rounded p-2 focus:outline-[#46A358] text-[#3D3D3D]"
               />
@@ -96,7 +116,7 @@ const Address: React.FC = () => {
                 required
                 name="town"
                 type="text"
-                defaultValue={user?.billing_address?.town}
+                defaultValue={user?.billing_address?.town || ""}
                 placeholder="Type your town / city..."
                 className="border border-[#EAEAEA] rounded p-2 focus:outline-[#46A358] text-[#3D3D3D]"
               />
@@ -110,7 +130,7 @@ const Address: React.FC = () => {
                 required
                 name="street"
                 type="text"
-                defaultValue={user?.billing_address?.street_address}
+                defaultValue={user?.billing_address?.street_address || ""}
                 placeholder="Type your street address..."
                 className="border border-[#EAEAEA] rounded p-2 focus:outline-[#46A358] text-[#3D3D3D]"
               />
@@ -123,7 +143,7 @@ const Address: React.FC = () => {
               <input
                 name="extra_address"
                 type="text"
-                defaultValue={user?.billing_address?.extra_address}
+                defaultValue={user?.billing_address?.extra_address || ""}
                 placeholder="Type your extra address..."
                 className="border border-[#EAEAEA] rounded p-2 focus:outline-[#46A358] text-[#3D3D3D]"
               />
@@ -137,7 +157,7 @@ const Address: React.FC = () => {
                 required
                 name="state"
                 type="text"
-                defaultValue={user?.billing_address?.state}
+                defaultValue={user?.billing_address?.state || ""}
                 placeholder="Type your state..."
                 className="border border-[#EAEAEA] rounded p-2 focus:outline-[#46A358] text-[#3D3D3D]"
               />
@@ -151,7 +171,7 @@ const Address: React.FC = () => {
                 required
                 name="zip"
                 type="text"
-                defaultValue={user?.billing_address?.zip}
+                defaultValue={user?.billing_address?.zip || ""}
                 placeholder="Type your zip..."
                 className="border border-[#EAEAEA] rounded p-2 focus:outline-[#46A358] text-[#3D3D3D]"
               />

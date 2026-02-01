@@ -27,11 +27,8 @@ const MonetizeSection: React.FC = () => {
               hover:scale-[1.02]
             "
           />
-
-          {/* soft overlay (premium look) */}
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-black/5 to-transparent" />
 
-          {/* shine */}
           <span
             className="
               pointer-events-none absolute -left-1/2 top-0 h-full w-1/2

@@ -40,9 +40,7 @@ const Header = () => {
           </Link>
         </div>
 
-        {/* Desktop actions */}
         <div className="hidden md:flex items-center gap-5">
-          {/* Search icon */}
           <svg
             width="20"
             height="20"
@@ -58,7 +56,6 @@ const Header = () => {
 
           <Bell className="cursor-pointer text-[#3D3D3D] hover:text-[#46A358]" />
 
-          {/* Cart (ESKI SVG) */}
           <div onClick={() => navigate("/shop")} className="cursor-pointer">
             <Badge count={data?.length || 0}>
               <svg
@@ -76,7 +73,6 @@ const Header = () => {
             </Badge>
           </div>
 
-          {/* Login/Profile */}
           <button
             onClick={() => {
               if (isAuth) return navigate("/profile");
@@ -88,7 +84,6 @@ const Header = () => {
           </button>
         </div>
 
-        {/* Mobile */}
         <div className="flex md:hidden items-center gap-3">
           <Menu
             className="w-7 h-7 text-[#3D3D3D] cursor-pointer"
@@ -97,7 +92,6 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Drawer (mobile menu) */}
       <Drawer
         placement="right"
         onClose={() => setIsDrawerOpen(false)}
@@ -107,7 +101,7 @@ const Header = () => {
           body: { padding: 0 },
           header: { padding: "12px 16px" },
         }}
-        size="default" // ✅ width o‘rniga
+        size="default"
         title={
           <div className="flex items-center justify-between w-full">
             <img src={Logo} alt="Logo" className="w-[95px]" />

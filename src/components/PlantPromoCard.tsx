@@ -57,7 +57,6 @@ const PlantPromoCard: React.FC<PlantPromoCardProps> = ({
         hover:-translate-y-1 hover:shadow-[0_18px_45px_rgba(0,0,0,0.10)]
       "
     >
-      {/* Decorative ellipses */}
       <div className="absolute z-10 bottom-[-28px] left-[-14px] opacity-80 group-hover:opacity-100 transition-opacity duration-300">
         <img src={Ellipse8} alt="" />
       </div>
@@ -65,11 +64,9 @@ const PlantPromoCard: React.FC<PlantPromoCardProps> = ({
         <img src={Ellipse7} alt="" />
       </div>
 
-      {/* Soft glow */}
       <div className="pointer-events-none absolute -top-24 -right-24 h-56 w-56 rounded-full bg-[#46A358]/10 blur-2xl opacity-60 group-hover:opacity-90 transition-opacity duration-300" />
       <div className="pointer-events-none absolute -bottom-28 -left-28 h-72 w-72 rounded-full bg-emerald-300/10 blur-2xl opacity-60 group-hover:opacity-90 transition-opacity duration-300" />
 
-      {/* Shine line */}
       <span
         className="
           pointer-events-none absolute -left-1/2 top-0 h-full w-1/2
@@ -81,7 +78,6 @@ const PlantPromoCard: React.FC<PlantPromoCardProps> = ({
         "
       />
 
-      {/* Image */}
       <div className="relative z-20 w-[40%] flex items-end justify-start">
         <img
           src={image}
@@ -94,7 +90,6 @@ const PlantPromoCard: React.FC<PlantPromoCardProps> = ({
         />
       </div>
 
-      {/* Text content */}
       <div className="relative z-20 w-[60%] flex flex-col justify-center text-right">
         <h3 className="font-family font-black text-[18px] sm:text-[19px] leading-[1.25] uppercase text-[#2f2f2f] mb-3 max-w-[280px] ml-auto">
           {title}

@@ -65,11 +65,9 @@ const Showcase = () => {
                 overflow-hidden
               "
             >
-              {/* soft background blobs (structurega tegmaydi) */}
               <div className="absolute -top-24 -left-24 w-64 h-64 rounded-full bg-green-200/25 blur-3xl" />
               <div className="absolute -bottom-24 -right-24 w-72 h-72 rounded-full bg-green-300/20 blur-3xl" />
 
-              {/* TEXT */}
               <div className="flex flex-col items-center md:items-start text-center md:text-left w-full md:max-w-[68%] z-10 justify-center">
                 <p
                   className={`font-family font-medium text-[11px] sm:text-[14px] leading-[114%] tracking-widest uppercase text-[#3d3d3d] mb-1
@@ -82,7 +80,6 @@ const Showcase = () => {
                   {slide.subTitle}
                 </p>
 
-                {/* TITLE + HIGHLIGHT (STRUCTURA 1ga1) */}
                 <h1
                   className={`font-family text-[#3d3d3d] font-semibold text-[28px] sm:text-[50px] xl:text-[70px] leading-[110%] uppercase
                   transition-all duration-700 ease-out delay-75 ${
@@ -125,7 +122,6 @@ const Showcase = () => {
                 </div>
               </div>
 
-              {/* IMAGE */}
               <div className="flex items-center justify-center w-full md:w-[40%] relative mt-6 md:mt-0 order-first md:order-last">
                 <div className="absolute w-[80%] h-[80%] rounded-full bg-green-200/30 blur-2xl z-0" />
                 <img
@@ -144,7 +140,6 @@ const Showcase = () => {
         ))}
       </Carousel>
 
-      {/* DOTS */}
       <div className="absolute bottom-[10px] left-1/2 -translate-x-1/2 flex gap-2 z-20">
         {slides.map((_, index) => (
           <span

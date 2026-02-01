@@ -61,7 +61,6 @@ const ShopPage = () => {
 
   return (
     <div className="w-[90%] max-w-[1400px] mx-auto mt-10 mb-20 flex flex-col lg:flex-row gap-8">
-      {/* SIDEBAR */}
       <div className="w-full lg:w-[20%] bg-[#f2f2f2] p-4 rounded-md h-fit">
         <h3 className="font-bold text-[18px] text-[#3D3D3D] mb-4">
           Categories
@@ -100,7 +99,6 @@ const ShopPage = () => {
               ))}
         </div>
 
-        {/* PRICE RANGE */}
         <div className="mt-8">
           <h3 className="font-bold text-[18px] text-[#3D3D3D] mb-4">
             Price Range
@@ -129,7 +127,6 @@ const ShopPage = () => {
           </p>
         </div>
 
-        {/* FILTER BUTTON */}
         <button
           onClick={() =>
             setParam({
@@ -154,7 +151,6 @@ const ShopPage = () => {
         </div>
       </div>
 
-      {/* PRODUCTS */}
       <div className="w-full lg:w-[75%]">
         <div className="mb-8 transition-all duration-300 hover:translate-y-[-2px]">
           <ProductsTitle />

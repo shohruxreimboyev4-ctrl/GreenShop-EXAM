@@ -43,41 +43,67 @@ const AccountDetails = () => {
   };
 
   const getCookie = (name: string) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop()!.split(";").shift();
-    return null;
+    try {
+      const value = `; ${document.cookie || ""}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length !== 2) return null;
+
+      const raw = parts.pop()!.split(";").shift() || "";
+      return raw || null;
+    } catch {
+      return null;
+    }
+  };
+
+  const setCookie = (name: string, value: string, days = 365) => {
+    try {
+      const expires = new Date(Date.now() + days * 864e5).toUTCString();
+      document.cookie = `${name}=${encodeURIComponent(
+        value,
+      )}; path=/; expires=${expires}; SameSite=Lax`;
+    } catch {
+      message.error("Could not save to cookie");
+    }
   };
 
   const getUserFromCookie = (): CookieUser | null => {
     const raw = getCookie("user");
     if (!raw) return null;
+
     try {
-      return JSON.parse(decodeURIComponent(raw)) as CookieUser;
+      const decoded = raw.includes("%") ? decodeURIComponent(raw) : raw;
+      return JSON.parse(decoded) as CookieUser;
     } catch {
       return null;
     }
   };
 
   const readStorage = (): Partial<ProfileFormValues> | null => {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = getCookie(STORAGE_KEY);
     if (!raw) return null;
+
     try {
-      return JSON.parse(raw) as Partial<ProfileFormValues>;
+      const decoded = raw.includes("%") ? decodeURIComponent(raw) : raw;
+      const parsed = JSON.parse(decoded) as Partial<ProfileFormValues>;
+      return parsed && typeof parsed === "object" ? parsed : null;
     } catch {
       return null;
     }
   };
 
   const writeStorage = (values: ProfileFormValues) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
+    try {
+      setCookie(STORAGE_KEY, JSON.stringify(values), 365);
+    } catch {
+      message.error("Could not save to cookie");
+    }
   };
 
   const fileToBase64 = (file: File) =>
     new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => resolve(String(reader.result));
-      reader.onerror = reject;
+      reader.onerror = () => reject(new Error("FileReader failed"));
       reader.readAsDataURL(file);
     });
 
@@ -146,7 +172,7 @@ const AccountDetails = () => {
     };
 
     writeStorage(payload);
-    message.success("Saved to localStorage ✅");
+    message.success("Saved to cookie ✅");
     console.log("Saved profile:", payload);
   };
 

@@ -11,15 +11,24 @@ const resources = {
   uz: { common: uz },
 } as const;
 
-i18n.use(initReactI18next).init({
-  resources,
-  lng: "uz",
-  fallbackLng: "en",
-  ns: ["common"],
-  defaultNS: "common",
-  interpolation: {
-    escapeValue: false,
-  },
-});
+i18n
+  .use(initReactI18next)
+  .init({
+    resources,
+
+    lng: "uz",
+
+    fallbackLng: "en",
+
+    ns: ["common"],
+    defaultNS: "common",
+
+    interpolation: {
+      escapeValue: false,
+    },
+
+    returnNull: false,
+    returnEmptyString: false,
+  });
 
 export default i18n;

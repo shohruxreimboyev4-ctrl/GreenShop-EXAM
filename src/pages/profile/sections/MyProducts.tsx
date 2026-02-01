@@ -24,58 +24,90 @@ const MyProducts: React.FC = () => {
   const [products, setProducts] = useState<ApiProduct[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ .env dan base url (oxiridagi slashni olib tashlaymiz)
+  // ✅ cookie o‘zgarganda qayta o‘qish uchun
+  const [cookieVersion, setCookieVersion] = useState(0);
+
   const BASE_URL_RAW = import.meta.env.VITE_BASE_URL as string;
   const BASE_URL = useMemo(
     () => (BASE_URL_RAW || "").replace(/\/+$/, ""),
     [BASE_URL_RAW],
   );
 
-  // ✅ cookie user
   const cookieUser = useMemo(() => {
     const raw = Cookies.get("user");
     if (!raw) return null;
+
     try {
-      return JSON.parse(raw) as CookieUser;
+      const maybeDecoded = raw.includes("%") ? decodeURIComponent(raw) : raw;
+      return JSON.parse(maybeDecoded) as CookieUser;
     } catch {
       return null;
     }
-  }, []);
+  }, [cookieVersion]);
 
-  // ✅ ism/familiya
   const fullName = useMemo(() => {
     if (!cookieUser) return "";
     return `${cookieUser?.name || ""} ${cookieUser?.surname || ""}`.trim();
   }, [cookieUser]);
 
-  // ✅ MUHIM: backend access_token deb USER ID (ObjectId) kutadi
   const userId = useMemo(() => {
     return (cookieUser?._id || "").trim();
   }, [cookieUser]);
+
+  // ✅ ba’zi backendlar access_token sifatida token kutadi
+  const token = useMemo(() => {
+    const raw = Cookies.get("token");
+    if (!raw) return "";
+    try {
+      return raw.includes("%") ? decodeURIComponent(raw) : raw;
+    } catch {
+      return raw;
+    }
+  }, [cookieVersion]);
 
   const fetchProducts = async (signal?: AbortSignal) => {
     try {
       setLoading(true);
       setError(null);
 
-      if (!userId) {
+      if (!BASE_URL) {
         setProducts([]);
-        setError("User ID topilmadi (login qiling).");
+        setError("VITE_BASE_URL topilmadi (.env ni tekshiring).");
+        return;
+      }
+
+      // ✅ 1-urinish: userId bor bo‘lsa shuni ishlatamiz
+      // ✅ 2-urinish: userId bo‘lmasa token bo‘lsa shuni ishlatamiz
+      const accessToken = userId || token;
+
+      if (!accessToken) {
+        setProducts([]);
+        setError("User ID yoki token topilmadi (login qiling).");
         return;
       }
 
       const url = `${BASE_URL}/user/products?access_token=${encodeURIComponent(
-        userId,
+        accessToken,
       )}`;
 
-      const res = await fetch(url, { signal });
+      const res = await fetch(url, {
+        method: "GET",
+        signal,
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+        },
+      });
 
       const rawText = await res.text();
+
       let data: any = null;
-      try {
-        data = rawText ? JSON.parse(rawText) : null;
-      } catch {
-        data = rawText;
+      if (rawText) {
+        try {
+          data = JSON.parse(rawText);
+        } catch {
+          data = rawText;
+        }
       }
 
       if (!res.ok) {
@@ -83,6 +115,7 @@ const MyProducts: React.FC = () => {
           status: res.status,
           url,
           response: data,
+          usedAccessToken: userId ? "userId" : token ? "token" : "none",
         });
 
         const msg =
@@ -94,7 +127,6 @@ const MyProducts: React.FC = () => {
         throw new Error(msg);
       }
 
-      // backend turlicha qaytarishi mumkin
       const list: ApiProduct[] = Array.isArray(data)
         ? data
         : Array.isArray(data?.products)
@@ -106,6 +138,7 @@ const MyProducts: React.FC = () => {
       setProducts(list);
     } catch (e: any) {
       if (e?.name === "AbortError") return;
+      setProducts([]);
       setError(e?.message || "Failed to load products");
     } finally {
       setLoading(false);
@@ -116,13 +149,19 @@ const MyProducts: React.FC = () => {
     const controller = new AbortController();
     fetchProducts(controller.signal);
     return () => controller.abort();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]);
+  }, [userId, token]);
 
   const onReload = async () => {
+    // ✅ reload bosilganda cookieni ham qayta o‘qiymiz
+    setCookieVersion((v) => v + 1);
+
     message.loading({ content: "Refreshing...", key: "myprod" });
-    await fetchProducts();
-    message.success({ content: "Updated ✅", key: "myprod", duration: 0.8 });
+    try {
+      await fetchProducts();
+      message.success({ content: "Updated ✅", key: "myprod", duration: 0.8 });
+    } catch {
+      message.error({ content: "Refresh failed", key: "myprod", duration: 1 });
+    }
   };
 
   return (
@@ -182,6 +221,7 @@ const MyProducts: React.FC = () => {
                       src={p.main_image}
                       alt={p.title || "product"}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   ) : (
                     <span className="text-gray-400 text-sm">No image</span>

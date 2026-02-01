@@ -95,7 +95,6 @@ const BlogSection: React.FC = () => {
                   "
                 />
 
-                {/* gradient overlay for premium look */}
                 <div
                   className="
                     absolute inset-0
@@ -105,7 +104,6 @@ const BlogSection: React.FC = () => {
                   "
                 />
 
-                {/* badge (glass) */}
                 <div
                   className="
                     absolute left-3 top-3
@@ -124,7 +122,6 @@ const BlogSection: React.FC = () => {
                   <span className="text-gray-600">{post.readTime}</span>
                 </div>
 
-                {/* subtle shine animation */}
                 <span
                   className="
                     pointer-events-none absolute -left-1/2 top-0 h-full w-1/2
@@ -196,7 +193,6 @@ const BlogSection: React.FC = () => {
                 </div>
               </div>
 
-              {/* bottom accent */}
               <div className="h-[3px] w-full bg-gradient-to-r from-[#46A358] via-emerald-300 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </article>
           ))}

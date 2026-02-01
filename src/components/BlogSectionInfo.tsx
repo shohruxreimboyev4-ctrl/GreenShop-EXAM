@@ -34,7 +34,6 @@ const BlogSectionInfo = () => {
     param: { search: "" },
   });
 
-  // cache key
   const CACHE_KEY = "blogs_cache_v2";
 
   useEffect(() => {
@@ -47,7 +46,6 @@ const BlogSectionInfo = () => {
       return;
     }
 
-    // fallback: cache
     try {
       const raw = localStorage.getItem(CACHE_KEY);
       if (!raw) return;
@@ -56,7 +54,6 @@ const BlogSectionInfo = () => {
     } catch {}
   }, [apiData]);
 
-  // debounce (typing -> needle)
   useEffect(() => {
     setTyping(true);
 
@@ -108,20 +105,16 @@ const BlogSectionInfo = () => {
 
   return (
     <div className="w-[90%] max-w-[1550px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* SEARCH */}
       {user && (
         <div className="mb-10 flex justify-center">
           <div className="w-full max-w-2xl">
-            {/* Outer “shine” frame */}
             <div className="relative rounded-full p-[1.5px] bg-gradient-to-r from-green-400/60 via-emerald-400/40 to-lime-300/50 shadow-[0_10px_35px_rgba(0,0,0,0.08)]">
               <div className="rounded-full bg-white">
                 <div className="flex items-center gap-2 sm:gap-3 px-3 py-2">
-                  {/* icon badge */}
                   <div className="shrink-0 w-10 h-10 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center">
                     <FaSearch className="text-gray-500" />
                   </div>
 
-                  {/* input */}
                   <div className="relative flex-1">
                     <input
                       value={q}
@@ -139,14 +132,12 @@ const BlogSectionInfo = () => {
                       "
                     />
 
-                    {/* typing status */}
                     {typing && (
                       <span className="absolute right-16 top-1/2 -translate-y-1/2 text-xs text-gray-400">
                         ...
                       </span>
                     )}
 
-                    {/* clear button */}
                     {!!q && (
                       <button
                         type="button"
@@ -170,7 +161,6 @@ const BlogSectionInfo = () => {
                     )}
                   </div>
 
-                  {/* search button */}
                   <button
                     onClick={onSearchClick}
                     className="
@@ -193,12 +183,10 @@ const BlogSectionInfo = () => {
                 </div>
               </div>
 
-              {/* subtle glow blobs */}
               <div className="pointer-events-none absolute -top-8 -left-10 w-28 h-28 bg-green-400/15 blur-2xl rounded-full" />
               <div className="pointer-events-none absolute -bottom-8 -right-10 w-28 h-28 bg-emerald-400/15 blur-2xl rounded-full" />
             </div>
 
-            {/* tiny helper line */}
             <div className="mt-3 text-center text-xs sm:text-sm text-gray-500">
               Type to filter. Press{" "}
               <span className="font-semibold">Search</span> for instant apply.
@@ -207,7 +195,6 @@ const BlogSectionInfo = () => {
         </div>
       )}
 
-      {/* GRID */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {typing || (isLoading && list.length === 0) ? (
           <SkeletonLoader variant="card" count={6} />

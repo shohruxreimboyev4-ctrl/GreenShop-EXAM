@@ -11,7 +11,13 @@ import CheckoutPage from "../pages/CheckoutPage";
 
 export const router = createBrowserRouter([
   {
-    element: <MainLayout />, 
+    element: <MainLayout />,
+    errorElement: (
+      <div style={{ padding: 24 }}>
+        <h2 style={{ marginBottom: 8 }}>Something went wrong</h2>
+        <p>Please refresh the page or try again later.</p>
+      </div>
+    ),
     children: [
       { path: "/", element: <Home /> },
       { path: "/blog", element: <Blog /> },
@@ -20,6 +26,16 @@ export const router = createBrowserRouter([
       { path: "/shop/:category/:id", element: <ProductPage /> },
       { path: "/blog/:id", element: <BlogDetail /> },
       { path: "/checkout", element: <CheckoutPage /> },
+
+      {
+        path: "*",
+        element: (
+          <div style={{ padding: 24 }}>
+            <h2 style={{ marginBottom: 8 }}>404 - Page not found</h2>
+            <p>Bu sahifa mavjud emas.</p>
+          </div>
+        ),
+      },
     ],
   },
 ]);

@@ -83,7 +83,6 @@ const Profile = () => {
 
         <Content style={{ paddingLeft: 32 }}>
           <div style={{ maxWidth: 900 }}>
-            {/* Render selected profile section */}
             {selectedKey === "account" && <AccountDetails />}
             {selectedKey === "products" && <MyProducts />}
             {selectedKey === "address" && <Address />}

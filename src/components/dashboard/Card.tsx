@@ -7,11 +7,16 @@ import {
   useReduxSelector,
 } from "../../hooks/useRedux/useRedux";
 import { getData } from "../../redux/shop-slice";
+import { useWishlist } from "../../hooks/useWishlist/useWishlist";
 
 const Card = ({ product }: { product: ProductType }) => {
   const navigate = useNavigate();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isAddingToWishlist, setIsAddingToWishlist] = useState(false);
   const dispatch = useReduxDispatch();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+
+  const isInWishlistState = isInWishlist(product._id);
 
   const { data } = useReduxSelector((state) => state.shopSlice);
 
@@ -98,13 +103,50 @@ const Card = ({ product }: { product: ProductType }) => {
             <ShoppingCart size={20} className="opacity-100" />
           </div>
 
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className={`${iconBtnBase} bg-white text-[#3D3D3D] hover:text-[#46A358] hover:shadow-[0_8px_18px_rgba(0,0,0,0.10)]`}
-            title="Add to Wishlist"
+          <button
+            type="button"
+            disabled={isAddingToWishlist}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsAddingToWishlist(true);
+              const success = toggleWishlist(product);
+              setIsAddingToWishlist(false);
+              if (success && !isInWishlistState) {
+                setTimeout(() => {
+                  navigate("/profile/wishlist");
+                }, 300);
+              }
+            }}
+            onKeyDown={(e) => {
+              if ((e.key === "Enter" || e.key === " ") && !isAddingToWishlist) {
+                e.preventDefault();
+                setIsAddingToWishlist(true);
+                const success = toggleWishlist(product);
+                setIsAddingToWishlist(false);
+                if (success && !isInWishlistState) {
+                  setTimeout(() => {
+                    navigate("/profile/wishlist");
+                  }, 300);
+                }
+              }
+            }}
+            className={`${iconBtnBase} ${
+              isInWishlistState
+                ? "bg-[#ff6b6b] text-white hover:shadow-[0_8px_18px_rgba(255,107,107,0.25)]"
+                : "bg-white text-[#3D3D3D] hover:text-[#46A358] hover:shadow-[0_8px_18px_rgba(0,0,0,0.10)]"
+            } ${
+              isAddingToWishlist ? "opacity-60" : ""
+            }`}
+            title={isInWishlistState ? "Remove from Wishlist" : "Add to Wishlist"}
+            aria-label="wishlist"
           >
-            <Heart size={20} className="opacity-100" />
-          </div>
+            <Heart
+              size={20}
+              className={`opacity-100 ${
+                isInWishlistState ? "fill-current" : ""
+              } ${isAddingToWishlist ? "animate-pulse" : ""}`}
+            />
+          </button>
 
           <div
             onClick={(e) => {

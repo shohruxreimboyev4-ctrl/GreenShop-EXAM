@@ -64,7 +64,6 @@ const BlogDetail: React.FC = () => {
 
   return (
     <div className="w-[90%] max-w-[1400px] mx-auto px-4 py-10 bg-white">
-      {/* Header / Title */}
       <div className="mb-6 flex flex-col gap-4">
         <div className="flex items-center gap-3">
           <button
@@ -89,7 +88,6 @@ const BlogDetail: React.FC = () => {
         </h1>
       </div>
 
-      {/* Short description */}
       {blog.short_description && (
         <div className="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-5">
           <p className="text-gray-700 text-base md:text-lg leading-relaxed">
@@ -98,7 +96,6 @@ const BlogDetail: React.FC = () => {
         </div>
       )}
 
-      {/* Content */}
       {blog.content ? (
         <div className="mb-8 rounded-xl border border-gray-100 bg-white shadow-sm">
           <div
@@ -110,7 +107,7 @@ const BlogDetail: React.FC = () => {
         <p className="text-gray-600 mb-8">Blog content mavjud emas.</p>
       )}
 
-      {/* Stats */}
+
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 text-gray-600 border-t pt-5">
         <div className="flex flex-wrap gap-3">
           <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 cursor-pointer hover:border-blue-200 hover:text-blue-600 transition-colors">

@@ -1,5 +1,6 @@
 import BlogSectionInfo from "../../components/BlogSectionInfo";
 import MonetizeSection from "../../components/MonetizeSection";
+import { memo } from "react";
 
 const Blog = () => {
   return (
@@ -10,4 +11,4 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+export default memo(Blog);

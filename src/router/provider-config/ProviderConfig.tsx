@@ -6,7 +6,20 @@ import { store } from "../../redux/redux";
 import { Toaster } from "react-hot-toast";
 
 const ProviderConfig = ({ children }: { children: React.ReactNode }) => {
-  const queryClient = new QueryClient();
+  const [queryClient] = React.useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: 1,
+            refetchOnWindowFocus: false,
+          },
+          mutations: {
+            retry: 0,
+          },
+        },
+      }),
+  );
 
   return (
     <>

@@ -7,11 +7,19 @@ interface InitialStateType {
   isAuth: boolean;
 }
 
-const userCookie = Cookies.get("user");
+const getUserFromCookie = (): AuthType | null => {
+  try {
+    const userCookie = Cookies.get("user");
+    if (!userCookie) return null;
+    return JSON.parse(userCookie) as AuthType;
+  } catch {
+    return null;
+  }
+};
 
 const initialState: InitialStateType = {
-  user: userCookie ? JSON.parse(userCookie) : null,
-  isAuth: !!userCookie,
+  user: getUserFromCookie(),
+  isAuth: !!getUserFromCookie(),
 };
 
 export const userSlice = createSlice({
@@ -21,12 +29,15 @@ export const userSlice = createSlice({
     getUser(state, action) {
       state.user = action.payload;
       state.isAuth = true;
+
+      Cookies.set("user", JSON.stringify(action.payload));
     },
 
-    // ✅ MANA SHU QO‘SHILADI
     logout(state) {
       state.user = null;
       state.isAuth = false;
+
+      Cookies.remove("user");
     },
   },
 });

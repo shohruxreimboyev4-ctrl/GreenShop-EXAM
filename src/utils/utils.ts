@@ -16,4 +16,4 @@ export const products_title: ProductsTitleType[] = [
     title: "Sale",
     route_path: "sale",
   },
-];
+] as const;
